@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>AngularJS集合数据遍历显示</title>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript">
+			// 初始化myapp模块
+			var myapp = angular.module("myapp", []);
+			// 定义模块的控制器 
+			// 依赖注入 ，$scope作用域对象，操作当前作用域视图 
+			myapp.controller("myctrl", ["$scope", function($scope) {
+				$scope.products = [{
+					id: 1001,
+					name: "数码相机",
+					price: 5000
+				}, {
+					id: 1002,
+					name: "华为手机",
+					price: 4000
+				}]
+			}]);
+		</script>
+	</head>
+
+	<body ng-app="myapp" ng-controller="myctrl">
+		<table width="50%" align="center" border="1">
+			<tr align="center">
+				<td>序号</td>
+				<td>商品编号</td>
+				<td>商品名称</td>
+				<td>商品价格</td>
+			</tr>
+			<tr align="center" ng-repeat="product in products">
+				<td>{{$index+1}}</td>
+				<td>{{product.id}}</td>
+				<td>{{product.name}}</td>
+				<td>{{product.price}}</td>
+			</tr>
+		</table>
+	</body>
+
+</html>

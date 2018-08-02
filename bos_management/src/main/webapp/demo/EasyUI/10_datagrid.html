@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>datagrid数据表格使用</title>
+		<!-- 导入 jquery核心类库 -->
+		<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+		<!-- 导入 easyui类库 -->
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<!-- 导入国际化信息文件 -->
+		<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+		<!-- 导入默认主题 CSS文件-->
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<!-- 导入图标 CSS文件-->
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript">
+			$(function() {
+				// 页面加载后对datagrid设置
+				$('#dg').datagrid({
+					// 设置表格的一些属性
+					columns: [
+						[{
+								field: 'id', //与服务器返回的json字段对应
+								title: '编号', //列标题显示内容
+								width: 100 //列宽度
+							},
+							{
+								field: 'name',
+								title: '名称',
+								width: 100
+							},
+							{
+								field: 'price',
+								title: '价格',
+								width: 100
+							}
+						]
+					],
+					url: 'product.json', //加载json数据，显示表格数据
+					// 分页设置
+					pagination: true, //显示分页条
+					pageNumber: 1, //初始化页号
+					pageSize: 10, //初始化页面大小
+					pageList: [5, 10, 15, 20, 15], //初始化页面大小选择列表
+					//顶部工具栏的数据显示
+					toolbar: [{
+							id: "button-save",
+							text: "保存",
+							iconCls: "icon-save",
+							handler: function() {
+								alert("保存...");
+							}
+						},
+						{
+							id: "button-edit",
+							text: "编辑",
+							iconCls: "icon-edit",
+							handler: function() {
+								alert("编辑...");
+							}
+						}
+					]
+
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<!-- 数据表格(需要在web服务器下访问) -->
+		<table id="dg"></table>
+	</body>
+
+</html>

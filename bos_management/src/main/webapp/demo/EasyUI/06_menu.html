@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>选项卡右键菜单</title>
+		<!-- 导入 jquery核心类库 -->
+		<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+		<!-- 导入 easyui类库 -->
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<!-- 导入国际化信息文件 -->
+		<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+		<!-- 引入ztree -->
+		<script type="text/javascript" src="js/ztree/jquery.ztree.all-3.5.js" charset="UTF-8"></script>
+		<link rel="stylesheet" href="js/ztree/zTreeStyle.css" />
+		<!-- 导入默认主题 CSS文件-->
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<!-- 导入图标 CSS文件-->
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript">
+			$(function() {
+				//1.进行ztree菜单设置
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					//4.为树形菜单绑定点击事件
+					callback: {
+						onClick: function(event, treeId, treeNode, clickFlag) {
+							var content = '<div style="width:100%;height:100%;overflow:hidden;">' +
+								'<iframe src="' +
+								treeNode.page +
+								'" scrolling="auto" style="width:100%;height:100%;border:0;" ></iframe></div>';
+							// 没有page树形菜单，不打开选项卡
+							if(treeNode.page != undefined && treeNode.page != "") {
+								//如果选项卡已经打开，就选中
+								if($("#mytabs").tabs("exists", treeNode.name)) {
+									//选中选项卡
+									$("#mytabs").tabs("select", treeNode.name);
+								} else {
+									//选项卡没有打开，添加选项卡
+									$("#mytabs").tabs("add", {
+										title: treeNode.name,
+										content: content,
+										closable: true,
+										tools: [{
+											iconCls: 'icon-reload', //刷新按钮
+											handler: function() { //点击刷新按钮事件
+												//刷新iframe
+												$("iframe[src='" + treeNode.page + "']").get(0)
+													.contentWindow.location.reload(true);
+											}
+										}]
+									});
+								}
+							}
+						}
+					}
+				};
+				//2.提供ztree菜单数据
+				var zNodes = [{
+						id: 1,
+						pId: 0,
+						name: "父节点1"
+					},
+					//ztree菜单与easyUI选项卡整合(自定义page)
+					{
+						id: 11,
+						pId: 1,
+						name: "创智播客",
+						page: "http://www.itcast.cn"
+					},
+					{
+						id: 12,
+						pId: 1,
+						name: "子节点12"
+					},
+					{
+						id: 13,
+						pId: 1,
+						name: "子节点13"
+					},
+					{
+						id: 2,
+						pId: 0,
+						name: "父节点2"
+					},
+					{
+						id: 21,
+						pId: 2,
+						name: "百度",
+						page: "https://www.baidu.com"
+					},
+					{
+						id: 22,
+						pId: 2,
+						name: "子节点22"
+					},
+					{
+						id: 23,
+						pId: 2,
+						name: "子节点23"
+					}
+				]
+				//3.生成菜单
+				$.fn.zTree.init($("#ztreeDemo"), setting, zNodes);
+
+				var tabTitle;
+
+				//5.对选项卡添加右键事件
+				$("#mytabs").tabs({
+					onContextMenu: function(e, title, index) {
+						// 阻止默认菜单显示
+						e.preventDefault();
+						//显示菜单
+						$('#mm').menu('show', {
+							left: e.pageX,
+							top: e.pageY
+						});
+
+						tabTitle = title;
+					}
+				});
+
+				//为反键菜单绑定点击事件
+				$('#mm').menu({
+					onClick: function(item) {
+						//alert(item.name);
+						if(item.name == "new") {
+							//关闭当前选项卡
+							$("#mytabs").tabs("close", tabTitle);
+							tabTitle = null;
+						} else if(item.name == "all") {
+							//关闭所有选项卡
+							var tabs = $("#mytabs").tabs("tabs");
+							$(tabs).each(function() {
+								var title = $(this).panel("options").title;
+								$("#mytabs").tabs("close", title);
+							});
+						} else if(item.name == "other") {
+							//关闭其它选项卡
+							var tabs = $("#mytabs").tabs("tabs");
+							$(tabs).each(function() {
+								var title = $(this).panel("options").title;
+								if(title != tabTitle) {
+									$("#mytabs").tabs("close", title);
+								}
+							});
+						}
+					}
+				});
+
+			});
+		</script>
+	</head>
+
+	<body class="easyui-layout">
+		<div data-options="region:'north',title:'North Title',split:true" style="height:120px;">北部区域</div>
+
+		<div data-options="region:'south',title:'South Title',split:true" style="height:120px;">南部区域</div>
+
+		<div data-options="region:'east',title:'East',split:true" style="width:180px;">东部区域</div>
+
+		<div data-options="region:'west',title:'菜单导航',split:true" style="width:180px;">
+			<!-- 折叠面板 -->
+			<div class="easyui-accordion" data-options="fit:true">
+				<!-- 通过ztree插件制作树菜单 -->
+				<ul id="ztreeDemo" class="ztree"></ul>
+			</div>
+		</div>
+
+		<div data-options="region:'center'">
+			<!-- 选项卡面板 -->
+			<div id="mytabs" class="easyui-tabs" data-options="fit:true">
+
+			</div>
+		</div>
+		<!--菜单(初始化时隐藏的)-->
+		<div id="mm" class="easyui-menu" style="width: 100px;">
+			<div data-options="name:'new'">关闭当前窗口</div>
+			<div data-options="name:'other'">关闭其它窗口</div>
+			<!--定义分割线-->
+			<div class="menu-sep"></div>
+			<div data-options="name:'all',iconCls:'icon-cancel'">关闭所有窗口</div>
+		</div>
+	</body>
+
+</html>
