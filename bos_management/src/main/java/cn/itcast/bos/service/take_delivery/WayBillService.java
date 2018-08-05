@@ -13,7 +13,7 @@ public interface WayBillService {
     public void quickSave(WayBill wayBill);
 
     // 快速运单录入分页查询方法
-    public Page<WayBill> findPageData(Pageable pageable);
+    public Page<WayBill> findPageData(WayBill wayBill, Pageable pageable);
 
     // 根据运单号查询运单方法
     public WayBill findByWayBillNum(String wayBillNum);

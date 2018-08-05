@@ -59,13 +59,13 @@ public class WayBillAction extends BaseAction<WayBill> {
         return SUCCESS;
     }
 
-    // 快速运单录入分页查询方法
+    // 运单录入分页查询方法
     @Action(value = "waybill_pageQuery", results = { @Result(name = "success", type = "json") })
     public String pageQuery() {
         // 封装分页查询对象
         Pageable pageable = new PageRequest(page - 1, rows, new Sort(new Sort.Order(Sort.Direction.ASC, "id")));
         // 调用业务层查询数据
-        Page<WayBill> pageData = wayBillService.findPageData(pageable);
+        Page<WayBill> pageData = wayBillService.findPageData(model,pageable);
         // 将对象压入值栈顶部返回
         pushPageDataToValueStack(pageData);
         return SUCCESS;

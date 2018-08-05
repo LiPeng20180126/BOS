@@ -17,10 +17,14 @@ import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Predicate.BooleanOperator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ExceptionMapping;
+import org.apache.struts2.convention.annotation.ExceptionMappings;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.xmlbeans.impl.common.IdentityConstraint.IdState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +50,11 @@ import cn.itcast.bos.service.base.CourierService;
 @Namespace("/")
 @ParentPackage("json-default")
 @SuppressWarnings("all")
+@ExceptionMappings({    
+    @ExceptionMapping(exception = "org.apache.shiro.authz.UnauthorizedException", 
+            result = "unauthorized")    
+}) 
+@Results( { @Result(name = "unauthorized", location = "/unauthorized.html") }) 
 public class CourierAction extends ActionSupport implements ModelDriven<Courier> {
 	// 模型驱动封装页面传递数据
 	private Courier courier = new Courier();
