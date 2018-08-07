@@ -13,4 +13,10 @@ public interface RoleService {
     // 查询登录用户的角色
     public List<Role> findByUser(User user);
 
+    // 查询所有角色的方法
+    public List<Role> findAll();
+
+    // 添加角色的方法
+    public void save(Role role, String[] permissionIds, String menuIds);
+
 }

@@ -25,11 +25,23 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<Permission> findByUser(User user) {
         // admin具有所有权限
-        if(user.getUsername().equals("admin")){
+        if (user.getUsername().equals("admin")) {
             return permissionRepository.findAll();
-        }else {
+        } else {
             return permissionRepository.findByUser(user.getId());
         }
+    }
+
+    // 查询所有权限的方法
+    @Override
+    public List<Permission> findAll() {
+        return permissionRepository.findAll();
+    }
+
+    // 添加权限的方法
+    @Override
+    public void save(Permission permission) {
+        permissionRepository.save(permission);
     }
 
 }

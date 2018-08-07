@@ -26,21 +26,22 @@ import cn.itcast.bos.service.system.UserService;
 /**
  * @description:自定义Realm ，实现安全数据连接
  */
-@Service("bosRealm")
+// @Service("bosRealm") //shiro整合ehcache缓存，在spring文件配置了
 public class BosRealm extends AuthorizingRealm {
     // 注入Service对象
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private PermissionService permissionService;
-    
+
     // shiro授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection pc) {
+        System.out.println("shiro授权...");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         // 根据当前登录用户查询对应角色和权限
         Subject subject = SecurityUtils.getSubject();
@@ -61,21 +62,22 @@ public class BosRealm extends AuthorizingRealm {
     // shiro认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        System.out.println("shiro认证...");
         // 转换token
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
         // 根据用户名查询用户信息
         User user = userService.findByUsername(usernamePasswordToken.getUsername());
         // 判断用户是否存在
-        if(user == null){
+        if (user == null) {
             // 用户不存在
             return null;
-        }else{
-            // 用户存在        
+        } else {
+            // 用户存在
             // 参数一：期望登录后，保存在subject中的信息
             // 参数二：如果返回null,用户名不存在，异常抛出
             // 当返回用户密码时，securityManager安全管理器，自动比较返回密码和用户输入密码是否一致
             // 如果密码一致 登录成功， 如果密码不一致 报密码错误异常
-            // 参数三：realm名称           
+            // 参数三：realm名称
             return new SimpleAuthenticationInfo(user, user.getPassword(), this.getName());
         }
     }

@@ -1,5 +1,6 @@
 package cn.itcast.bos.domain.system;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,12 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.apache.struts2.json.annotations.JSON;
+
 /**
  * @description:权限名称
  */
 @Entity
 @Table(name = "T_PERMISSION")
-public class Permission {
+public class Permission implements Serializable{
 
 	@Id
 	@GeneratedValue
@@ -55,6 +58,7 @@ public class Permission {
 		this.keyword = keyword;
 	}
 
+	@JSON(serialize = false)
 	public Set<Role> getRoles() {
 		return roles;
 	}

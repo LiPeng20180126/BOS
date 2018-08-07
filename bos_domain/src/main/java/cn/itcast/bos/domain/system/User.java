@@ -1,5 +1,6 @@
 package cn.itcast.bos.domain.system;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,12 +14,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.apache.struts2.json.annotations.JSON;
+
 /**
  * @description:后台用户
  */
 @Entity
 @Table(name = "T_USER")
-public class User {
+public class User implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(name = "C_ID")
@@ -126,6 +129,7 @@ public class User {
 		this.nickname = nickname;
 	}
 
+	@JSON(serialize = false)
 	public Set<Role> getRoles() {
 		return roles;
 	}

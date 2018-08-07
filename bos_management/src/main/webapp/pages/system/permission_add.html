@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="UTF-8">
 		<title>权限添加</title>
@@ -15,10 +16,14 @@
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.cookie.js"></script>
 		<script src="../../js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			$(function(){
+			$(function() {
 				// 点击保存
-				$('#save').click(function(){
-					location.href='permission.html';
+				$('#save').click(function() {
+					if($("#permissionForm").form("validate")) {
+						$("#permissionForm").submit();
+					} else {
+						$.messager.alert("警告", "表单中还存在非法字段", "warning");
+					}
 				});
 			});
 		</script>
@@ -31,7 +36,7 @@
 			</div>
 		</div>
 		<div data-options="region:'center'">
-			<form id="functionForm" method="post">
+			<form id="permissionForm" method="post" action="../../permission_save.action">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">权限信息</td>
@@ -45,7 +50,7 @@
 					<tr>
 						<td>关键字</td>
 						<td>
-							<input type="text" name="keyword" class="easyui-validatebox" data-options="required:true" /> 
+							<input type="text" name="keyword" class="easyui-validatebox" data-options="required:true" />
 						</td>
 					</tr>
 					<tr>

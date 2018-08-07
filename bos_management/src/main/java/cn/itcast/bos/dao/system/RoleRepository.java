@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import cn.itcast.bos.domain.system.Role;
-import cn.itcast.bos.domain.system.User;
 
 /**
  * @description:角色的Dao接口

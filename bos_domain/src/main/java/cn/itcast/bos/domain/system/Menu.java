@@ -1,5 +1,6 @@
 package cn.itcast.bos.domain.system;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,102 +13,117 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.struts2.json.annotations.JSON;
 
 /**
  * @description:菜单
  */
 @Entity
 @Table(name = "T_MENU")
-public class Menu {
-	@Id
-	@GeneratedValue
-	@Column(name = "C_ID")
-	private Integer id;
-	
-	@Column(name = "C_NAME")
-	private String name; // 菜单名称
-	
-	@Column(name = "C_PAGE")
-	private String page; // 访问路径
-	
-	@Column(name = "C_PRIORITY")
-	private Integer priority; // 优先级
-	
-	@Column(name = "C_DESCRIPTION")
-	private String description; // 描述
+public class Menu implements Serializable {
+    @Id
+    @GeneratedValue
+    @Column(name = "C_ID")
+    private Integer id;
 
-	@ManyToMany(mappedBy = "menus")
-	private Set<Role> roles = new HashSet<Role>(0); // 角色
+    @Column(name = "C_NAME")
+    private String name; // 菜单名称
 
-	@OneToMany(mappedBy = "parentMenu")
-	private Set<Menu> childrenMenus = new HashSet<Menu>(); // 菜单
+    @Column(name = "C_PAGE")
+    private String page; // 访问路径
 
-	@ManyToOne
-	@JoinColumn(name = "C_PID")
-	private Menu parentMenu;
+    @Column(name = "C_PRIORITY")
+    private Integer priority; // 优先级
 
-	public Integer getId() {
-		return id;
-	}
+    @Column(name = "C_DESCRIPTION")
+    private String description; // 描述
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @ManyToMany(mappedBy = "menus")
+    private Set<Role> roles = new HashSet<Role>(0); // 角色
 
-	public String getName() {
-		return name;
-	}
+    @OneToMany(mappedBy = "parentMenu")
+    private Set<Menu> childrenMenus = new HashSet<Menu>(); // 菜单
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @ManyToOne
+    @JoinColumn(name = "C_PID")
+    private Menu parentMenu;
 
-	public String getPage() {
-		return page;
-	}
+    // 生成父菜单项
+    @Transient
+    public Integer getpId() {
+        if (parentMenu == null) {
+            return 0;
+        } else {
+            return parentMenu.getId();
+        }
+    }
 
-	public void setPage(String page) {
-		this.page = page;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Integer getPriority() {
-		return priority;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getPage() {
+        return page;
+    }
 
-	public Set<Role> getRoles() {
-		return roles;
-	}
+    public void setPage(String page) {
+        this.page = page;
+    }
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
+    public Integer getPriority() {
+        return priority;
+    }
 
-	public Set<Menu> getChildrenMenus() {
-		return childrenMenus;
-	}
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 
-	public void setChildrenMenus(Set<Menu> childrenMenus) {
-		this.childrenMenus = childrenMenus;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Menu getParentMenu() {
-		return parentMenu;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setParentMenu(Menu parentMenu) {
-		this.parentMenu = parentMenu;
-	}
+    @JSON(serialize = false)
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @JSON(serialize = false)
+    public Set<Menu> getChildrenMenus() {
+        return childrenMenus;
+    }
+
+    public void setChildrenMenus(Set<Menu> childrenMenus) {
+        this.childrenMenus = childrenMenus;
+    }
+
+    public Menu getParentMenu() {
+        return parentMenu;
+    }
+
+    public void setParentMenu(Menu parentMenu) {
+        this.parentMenu = parentMenu;
+    }
 
 }
