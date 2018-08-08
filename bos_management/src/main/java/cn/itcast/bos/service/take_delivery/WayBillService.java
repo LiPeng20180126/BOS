@@ -20,5 +20,8 @@ public interface WayBillService {
 
     // 运单录入保存方法
     public void save(WayBill wayBill);
+    
+    // 更新索引库方法
+    public void syncIndex();
 
 }

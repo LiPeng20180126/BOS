@@ -34,7 +34,7 @@
 				});
 				return serializeObj;
 			};
-			
+
 			// 绑定查询的点击事件
 			function doSearch() {
 				// form表单数据转成json数据
@@ -42,6 +42,40 @@
 				// 将json数据加载到datagrid上
 				$('#tt').datagrid('load', params);
 			}
+
+			$(function() {
+				// 对开始中转配送绑定点击事件
+				$("#transitBtn").click(function() {
+					var row = $("#tt").datagrid("getSelections");
+					if(row.length == 0) {
+						// 没选
+						$.messager.alert("警告", "必须选中运单信息", "warning");
+					} else {
+						// 选中运单，获取运单中id
+						var array = new Array();
+						for(var i = 0; i < row.length; i++) {
+							array.push(row[i].id);
+						}
+						var wayBillIds = array.join("-");
+						$.post("../../transit_create.action",{"wayBillIds":wayBillIds},function(data){
+							// 返回值{success,msg}
+							if(data.success){
+								$.messager.show({
+									title:"操作成功",
+									msg:data.msg
+								});
+							}else{
+								$.messager.show({
+									title:"操作失败",
+									msg:data.msg
+								});
+							}
+						});
+					}
+
+				});
+
+			})
 		</script>
 	</head>
 
@@ -55,20 +89,21 @@
 			<a id="help" icon="icon-save" href="#" class="easyui-linkbutton" plain="true">保存</a>
 			<a id="help" icon="icon-print" href="#" class="easyui-linkbutton" plain="true">打印标签</a>
 			<a id="help" icon="icon-print" href="#" class="easyui-linkbutton" plain="true">打印工作单</a>
+			<a id="transitBtn" icon="icon-edit" href="#" class="easyui-linkbutton" plain="true">开始中转配送</a>
 
-			<br /> 
+			<br />
 			<form id="waybillForm">
-				运单号：<input name="wayBillNum" style="line-height:20px;border:1px solid #ccc">
-				发货地：<input name="sendAddress" style="line-height:20px;border:1px solid #ccc"> 
-				收货地：<input name="recAddress" style="line-height:20px;border:1px solid #ccc">
-	
+				运单号：<input name="wayBillNum" style="line-height:20px;border:1px solid #ccc"> 发货地：
+				<input name="sendAddress" style="line-height:20px;border:1px solid #ccc"> 收货地：
+				<input name="recAddress" style="line-height:20px;border:1px solid #ccc">
+
 				<select class="easyui-combobox" style="width:150px" name="sendProNum">
 					<option value="">请选择快递产品类型</option>
 					<option value="速运当日">速运当日</option>
 					<option value="速运次日">速运次日</option>
 					<option value="速运隔日">速运隔日</option>
 				</select>
-	
+
 				<select class="easyui-combobox" style="width:150px" name="signStatus">
 					<option value="0">请选择运单状态</option>
 					<option value="1">待发货</option>
@@ -76,7 +111,7 @@
 					<option value="3">已签收</option>
 					<option value="4">异常</option>
 				</select>
-	
+
 				<a href="javascript:void(0)" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
 			</form>
 		</div>

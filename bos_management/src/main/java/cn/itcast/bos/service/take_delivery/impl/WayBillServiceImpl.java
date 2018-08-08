@@ -1,5 +1,7 @@
 package cn.itcast.bos.service.take_delivery.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -32,7 +34,7 @@ public class WayBillServiceImpl implements WayBillService {
 
     @Autowired
     private WayBillIndexRepository wayBillIndexRepository;
- 
+
     // 快速运单录入保存方法
     @Override
     public void quickSave(WayBill wayBill) {
@@ -80,8 +82,8 @@ public class WayBillServiceImpl implements WayBillService {
                 QueryBuilder wildcardQuery =
                         new WildcardQueryBuilder("recAddress", "*" + wayBill.getRecAddress() + "*");
                 // 情况二：多个词条组合查询，进行分词后匹配查询
-                QueryBuilder queryStringQuery = new QueryStringQueryBuilder(wayBill.getRecAddress())
-                        .field("recAddress").defaultOperator(Operator.AND);
+                QueryBuilder queryStringQuery = new QueryStringQueryBuilder(wayBill.getRecAddress()).field("recAddress")
+                        .defaultOperator(Operator.AND);
                 // 两种情况取or
                 BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
                 boolQueryBuilder.should(wildcardQuery);
@@ -119,12 +121,38 @@ public class WayBillServiceImpl implements WayBillService {
         // 判断运单号是否存在
         Integer id = wayBillRepository.findIdByWayBillNum(wayBill.getWayBillNum());
         if (id != null) {
-            wayBill.setId(id);
+            // 运单存在
+            // 判断运单状态是否为待发货
+            if (wayBill.getSignStatus() == 1) {
+                // 待发货
+                wayBill.setId(id);
+                // 保存运单
+                wayBillRepository.save(wayBill);
+                // 保存索引
+                wayBillIndexRepository.save(wayBill);
+            } else {
+                // 运单已经在运输中，无法修改
+                throw new RuntimeException("运单已经发出，无法进行修改操作！");
+            }
+        } else {
+            // 运单不存在
+            // 保存运单状态
+            wayBill.setSignStatus(1);
+            // 保存运单
+            wayBillRepository.save(wayBill);
+            // 保存索引
+            wayBillIndexRepository.save(wayBill);
         }
-        // 保存运单
-        wayBillRepository.save(wayBill);
-        // 保存索引
-        wayBillIndexRepository.save(wayBill);
+
+    }
+
+    // 更新索引库方法
+    @Override
+    public void syncIndex() {
+        // 查询数据库
+        List<WayBill> wayBills = wayBillRepository.findAll();
+        // 更新索引库
+        wayBillIndexRepository.save(wayBills);
     }
 
 }
