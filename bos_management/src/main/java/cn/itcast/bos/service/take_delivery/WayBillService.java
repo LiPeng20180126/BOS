@@ -1,5 +1,7 @@
 package cn.itcast.bos.service.take_delivery;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,5 +25,8 @@ public interface WayBillService {
     
     // 更新索引库方法
     public void syncIndex();
+
+    // 查询满足当前条件的运单数据
+    public List<WayBill> findWayBills(WayBill wayBill);
 
 }
